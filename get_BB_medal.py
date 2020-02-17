@@ -43,7 +43,8 @@ def get_stat(ids):
     accounts = []
     if(raw_data["status"]=="ok"):
         for i in [*ids]:
-            if("wins" in raw_data["data"][i]["statistics"]["all"]):
+
+            if(raw_data["data"][i] != None):
                 accounts.append({'id':int(i),
                                 "bb_team":ids[i]['medal'],
                                 'wins':raw_data["data"][i]["statistics"]["all"]["wins"],
@@ -61,17 +62,16 @@ def get_stat(ids):
                                 'total_damage':0})
 
     return accounts
-
 def write_to_db(accounts):
         log = client.execute("INSERT INTO wot.player_stat VALUES",accounts,types_check=True)
         return log
 client = clickhouse_driver.Client(host=host["ip"])
-
-with open("last_account_id.txt","r") as f:
-    last_account_id = int(f.read())# read last accoutn id
-ids_list=list(range(last_account_id,last_account_id+100))
-acc_bb_medals = get_bb_medal(ids_list)
-accounts = get_stat(acc_bb_medals)
-write_to_db(accounts)
-with open("last_account_id.txt","w") as f:
-    f.write(str(last_account_id+100))
+for i in range(30): # because server app can have querry rate about 20 querryes per second
+    with open("last_account_id.txt","r") as f:
+        last_account_id = int(f.read())# read last accoutn id
+    ids_list=list(range(last_account_id,last_account_id+100))
+    acc_bb_medals = get_bb_medal(ids_list)
+    accounts = get_stat(acc_bb_medals)
+    write_to_db(accounts)
+    with open("last_account_id.txt","w") as f:
+        f.write(str(last_account_id+100))
