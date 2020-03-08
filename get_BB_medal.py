@@ -9,9 +9,9 @@ Yusha_medal="medalBobYusha"
 Amway_medal="medalBobAmway921"
 medals=[Korben_medal,Lebwa_medal,Yusha_medal,Amway_medal]
 
-with open("app_id.txt","r") as f:
+with open("app_id.txt","r") as f: ## app_id.txt is file with wargaming API key
     app_id = f.read()
-with open("clickhouse_host.json") as f:
+with open("clickhouse_host.json") as f: # clickhouse database host and user 
     host = json.loads(f.read())  
 
 
